@@ -43,14 +43,10 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs genmsg OpenCV)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(FILES PIDTick.msg)
 
 ## Generate services in the 'srv' folder
-add_service_files(FILES Trigger.srv HMI.srv)
+add_service_files(FILES HMI.srv Trigger.srv)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -184,9 +180,9 @@ include_directories( include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(MinotauroController src/MinotauroController.cpp)
-target_link_libraries(MinotauroController ${catkin_LIBRARIES})
-add_dependencies(MinotauroController Minotauro_gencpp)
+add_executable(MainController src/MainController.cpp)
+target_link_libraries(MainController ${catkin_LIBRARIES})
+add_dependencies(MainController Minotauro_gencpp)
 
 add_executable(Camera src/Camera.cpp)
 target_link_libraries(Camera ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})

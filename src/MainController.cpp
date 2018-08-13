@@ -4,14 +4,38 @@
 #include "std_msgs/String.h"
 #include "Minotauro/HMI.h"
 
-int HMI_Input[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+std_msgs::Int32 snPIDTick;
 
 bool HMI_Input_Callback(Minotauro::HMI::Request  &req, Minotauro::HMI::Response &res)
 {
-	HMI_Input[req.channel] = req.message;
+	switch(req.channel)
+	{
+		case 0:
+			snPIDTick.data = req.message;			
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		case 8:
+			break;
+		case 9:
+			break;
+		case 10:
+			break;		
+	}
 
-	ROS_INFO("HMI input received");
-  	ROS_INFO("%d , %d", req.channel, req.message);
+	ROS_INFO("HMI input received: %d , %d", (int) req.channel, (int) req.message);
 
   	return true;
 }
@@ -44,21 +68,14 @@ int main(int argc, char *argv[])
 
 	ros::ServiceServer HMI_Input_Server = n.advertiseService("HMI_Input_Service", HMI_Input_Callback);
 
-	ros::Publisher PIDTick_Publisher 	= n.advertise<std_msgs::Bool>("PIDTick_Topic", 1000);
-	ros::Publisher Motion_Publisher  	= n.advertise<std_msgs::Bool>("Motion_Topic" , 1000);
+	ros::Publisher PIDTick_Publisher 	= n.advertise<std_msgs::Int32>("PIDTick_Topic", 1000);
 
-	ros::Rate loop_rate(.5);
-
-	std_msgs::Bool msg;
-	msg.data = true;
+	ros::Rate loop_rate(20);
 
 	while (ros::ok())
 	{
-		if(HMI_Input[0] == 1)
-		{
-			ROS_INFO("PIDTick: %d", msg.data);
-			PIDTick_Publisher.publish(msg);
-		}
+		ROS_INFO("PIDTick: %d", (int) snPIDTick.data);
+		PIDTick_Publisher.publish(snPIDTick);
 		
 	 	ros::spinOnce();
 	 	loop_rate.sleep();

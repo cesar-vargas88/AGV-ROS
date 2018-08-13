@@ -2,6 +2,7 @@
 #include "std_msgs/Int32.h"
 #include "std_msgs/Bool.h"
 #include "Minotauro/Trigger.h"
+#include "Minotauro/PIDTick.h"
 
 class PID
 {
@@ -53,12 +54,38 @@ class PID
         float TiempoMuestreo;
 };
 
-bool PIDTick = false;
+ros::ServiceClient 	CameraTrigger_Client; 
+ros::Subscriber 	PIDTick_Subscriber;
+ros::Publisher 		MotorsDriver_Publisher;
 
-void PIDTick_Callback(const std_msgs::Bool::ConstPtr& msg)
+std_msgs::Int32 PIDOutput;
+Minotauro::Trigger srv;
+
+int PIDTick = 0;
+
+PID  pid(5, 0.5, 2, 0.1, 0.1);
+
+void PIDTick_Callback(const std_msgs::Int32::ConstPtr& msg)
 {
 	PIDTick = msg->data;	
-	//ROS_INFO("PIDTick received: %d", msg->data);
+	ROS_INFO("PIDTick received: %d", msg->data);
+
+	if(PIDTick == 1)
+	{		
+		PIDOutput.data = PIDTick;
+		if (CameraTrigger_Client.call(srv))
+		{
+			PIDOutput.data = pid.GetOutput(srv.response.CameraError);	
+			ROS_INFO("Trgger: %d , %d", srv.response.Success, srv.response.CameraError);					
+		}
+ 		else
+			ROS_ERROR("Failed to call Camera_Service");
+	}	
+	else
+		PIDOutput.data = PIDTick;
+	
+	ROS_INFO("PIDOutput: %d", PIDOutput.data);
+	MotorsDriver_Publisher.publish(PIDOutput);	
 }
 
 int main(int argc, char **argv)
@@ -66,37 +93,34 @@ int main(int argc, char **argv)
   	ros::init(argc, argv, "PID_Node");
   	ros::NodeHandle n;
 
-  	ros::ServiceClient CameraTrigger_Client = n.serviceClient<Minotauro::Trigger>("CameraTrigger_Service");
+  	CameraTrigger_Client = n.serviceClient<Minotauro::Trigger>("CameraTrigger_Service");
 
-  	ros::Subscriber PIDTick_Subscriber = n.subscribe("PIDTick_Topic", 1000, PIDTick_Callback);
+  	PIDTick_Subscriber = n.subscribe("PIDTick_Topic", 1000, PIDTick_Callback);
   	ros::spinOnce();
 
-  	ros::Publisher MotorsDriver_Publisher = n.advertise<std_msgs::Int32>("MotorsDriver_Topic", 1000);	
-  	ros::Rate loop_rate(100);
-
-  	PID  pid(5, 0.5, 2, 0.1, 0.1);
-
-  	std_msgs::Int32 msg;
-
-	Minotauro::Trigger srv;
+  	MotorsDriver_Publisher = n.advertise<std_msgs::Int32>("MotorsDriver_Topic", 1000);	
+  	ros::Rate loop_rate(2);
 
 	while(true)
 	{
-		if(PIDTick)
+		/*if(PIDTick == 1)
 		{		
+			PIDOutput.data = PIDTick;
 			if (CameraTrigger_Client.call(srv))
 			{
-				msg.data =  pid.GetOutput(srv.response.CameraError);	
-				ROS_INFO("Trgger response: %d , %d , PID output: %d", srv.response.Success, srv.response.CameraError, msg.data);
-				MotorsDriver_Publisher.publish(msg);	
-				
+				PIDOutput.data = pid.GetOutput(srv.response.CameraError);	
+				ROS_INFO("Trgger: %d , %d", srv.response.Success, srv.response.CameraError);					
 			}
  			else
 				ROS_ERROR("Failed to call Camera_Service");
-
-			PIDTick = false;	
 		}	
+		else
+			PIDOutput.data = PIDTick;
+		
+		ROS_INFO("PIDOutput: %d", PIDOutput.data);
+		MotorsDriver_Publisher.publish(PIDOutput);	
 
+*/
 		ros::spinOnce();
 	 	loop_rate.sleep();	
 	}
