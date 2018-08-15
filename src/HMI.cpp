@@ -11,8 +11,6 @@ int main(int argc, char **argv)
 
 	ros::ServiceClient HMI_Input_Client = n.serviceClient<Minotauro::HMI>("HMI_Input_Service");
 
-	//int nCommand = 0;
-
 	Minotauro::HMI srv;
 
 	while(true)
@@ -21,14 +19,9 @@ int main(int argc, char **argv)
 		std::cin >> srv.request.message;
 		srv.request.channel = 0;
 
-		//std::cin >> nCommand;
-		//srv.request.channel = nCommand;	
-		
 		HMI_Input_Client.call(srv);
 			
 		ros::spinOnce();
-
-	 	//loop_rate.sleep();	
 	}
 
   	return 0;

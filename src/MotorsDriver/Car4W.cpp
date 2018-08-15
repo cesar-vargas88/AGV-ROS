@@ -23,11 +23,6 @@ void Car4W::Setup()
 
 void Car4W::Forward(int SpeedMotorRearLeft, int SpeedMotorRearRight, int SpeedMotorFrontLeft, int SpeedMotorFrontRight)
 {
-	/*MotorFrontLeft.Forward(SpeedMotorFrontLeft);
-	MotorFrontRight.Forward(SpeedMotorFrontRight);
-	MotorRearLeft.Forward(SpeedMotorRearLeft);
-	MotorRearRight.Forward(SpeedMotorRearRight);*/
-
     if(SpeedMotorFrontLeft >= 0)	  MotorFrontLeft.Forward(SpeedMotorFrontLeft);
     else                            MotorFrontLeft.Backward(-1*SpeedMotorFrontLeft);       
   

@@ -203,12 +203,10 @@ LineDetection lineDetection;
 
 bool CameraTrigger_Callback(Minotauro::Trigger::Request  &req, Minotauro::Trigger::Response &res)
 {
-  	res.Success     = true;
   	res.CameraError = lineDetection.GetError();
-  	//res.CameraError = 10;
 
-  	ROS_INFO("Trigger received");
-  	//ROS_INFO("Sending back response: %d , %d", res.Success, res.CameraError);
+  	ROS_INFO("Camera - Trigger received");
+  	ROS_INFO("Camera - Sending back response: %d", (int) res.CameraError);
 
   	return true;
 }
@@ -222,7 +220,7 @@ int main(int argc, char **argv)
 
   	ros::ServiceServer CameraTrigger_Server = n.advertiseService("CameraTrigger_Service", CameraTrigger_Callback);
 
-  	ROS_INFO("Ready to receive camera trigger request");
+  	ROS_INFO("Camera - Ready to receive camera trigger request");
   	ros::spin();
 
   	return 0;

@@ -35,7 +35,7 @@ bool HMI_Input_Callback(Minotauro::HMI::Request  &req, Minotauro::HMI::Response 
 			break;		
 	}
 
-	ROS_INFO("HMI input received: %d , %d", (int) req.channel, (int) req.message);
+	ROS_INFO("MainController - HMI input received: %d , %d", (int) req.channel, (int) req.message);
 
   	return true;
 }
@@ -70,11 +70,11 @@ int main(int argc, char *argv[])
 
 	ros::Publisher PIDTick_Publisher 	= n.advertise<std_msgs::Int32>("PIDTick_Topic", 1000);
 
-	ros::Rate loop_rate(20);
+	ros::Rate loop_rate(10);
 
 	while (ros::ok())
 	{
-		ROS_INFO("PIDTick: %d", (int) snPIDTick.data);
+		ROS_INFO("MainController - PIDTick: %d", (int) snPIDTick.data);
 		PIDTick_Publisher.publish(snPIDTick);
 		
 	 	ros::spinOnce();

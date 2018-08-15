@@ -43,7 +43,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs genmsg OpenCV)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(FILES PIDTick.msg)
+#add_message_files(FILES PIDTick.msg)
 
 ## Generate services in the 'srv' folder
 add_service_files(FILES HMI.srv Trigger.srv)
